@@ -1,0 +1,6 @@
+name: Mandroid
+version: 1.0
+main: red.man10.mandroid.Mandroid
+commands:
+  mandroid:
+    default: op
