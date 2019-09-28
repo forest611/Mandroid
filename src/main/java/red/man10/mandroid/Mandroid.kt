@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
 open class Mandroid : JavaPlugin(), Listener {
 
     val prefix = "§2§l[Mandroid]"
-    val version = "b1.0"
+    val version = "b1.1"
     val apps = ConcurrentHashMap<Int,AppData>()
     var mandroidSystem = true
 
@@ -41,25 +41,27 @@ open class Mandroid : JavaPlugin(), Listener {
 
     override fun onCommand(sender: CommandSender?, command: Command?, label: String?, args: Array<out String>?): Boolean {
 
-        if (args!![0] == "use"){
+
+
+        if (args!![0] == "use" && sender == Bukkit.getConsoleSender()){
             val p = Bukkit.getPlayer(args[1])
 
-            if (!mandroidSystem){
+            if (!mandroidSystem || Math.random() <=0.01){
                 p.sendMessage("$prefix§e§lMandroidシステムは現在メンテナンス中です")
                 return true
             }
 
 
-            if (Math.random() <=0.03){
+            if (Math.random() <=0.05){
                 val i = p.inventory.itemInMainHand
 
                 if (i.itemMeta == null)return true
-                if (i.itemMeta.displayName.indexOf("mandroid") == -1)return true
+                if (i.itemMeta.displayName.indexOf("Mandroid") == -1)return true
 
                 i.amount = 0
                 p.inventory.itemInMainHand = i
                 p.sendMessage("§4§lマンドロイドが壊れてしまった！")
-                p.location.world.createExplosion(p.location,2.5F,false)
+                p.location.world.createExplosion(p.location,0.0F,false)
                 return true
             }
             openMandroid(p)
@@ -120,16 +122,19 @@ open class Mandroid : JavaPlugin(), Listener {
         val p : Player = (e.whoClicked as? Player)!!
 
         if (e.inventory.title.indexOf(prefix) == -1)return
+        e.isCancelled = true
         if (!p.hasPermission("mandroid.using"))return
 
-        e.isCancelled = true
-        val slotList = mutableListOf(11,13,15,29,31,33,47,49,51)
-        if (slotList.indexOf(e.slot) != -1){
+        if(Math.random() >=0.2){
 
-            p.closeInventory()
+            val slotList = mutableListOf(11,13,15,29,31,33,47,49,51)
+            if (slotList.indexOf(e.slot) != -1){
 
-            p.performCommand(apps[slotList.indexOf(e.slot)]!!.cmd)
+                p.closeInventory()
+                Bukkit.dispatchCommand(p,apps[slotList.indexOf(e.slot)]!!.cmd)
+            }
         }
+
     }
 
     fun openMandroid(p:Player){
